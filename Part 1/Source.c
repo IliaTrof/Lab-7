@@ -43,7 +43,7 @@ void WriteFile(Node* queue, char* filename)
 	FILE* f = fopen(filename, "w");
 	Node* tmp;
 	tmp = queue;
-	while (tmp->next)
+	while (tmp != NULL)
 	{
 		fprintf(f, "%d\n", tmp->num);
 		tmp = tmp->next;
@@ -110,11 +110,49 @@ Node* RemoveOverAverage(Node* queue)
 	return queue;
 }
 
+void PlacingSort(Node* queue)
+{
+	int tmp;
+	Node* i, * j;
+	i = queue;
+	while (i->next != NULL)
+	{
+		j = i->next;
+		while (j != NULL)
+		{
+			if (i->num > j->num)
+			{
+				tmp = i->num;
+				i->num = j->num;
+				j->num = tmp;
+			}
+			j = j->next;
+		}
+		i = i->next;
+	}
+}
+
+void SortAfterPositive(Node* queue)
+{
+	Node* tmp = queue;
+	Node* start = NULL;
+	while (tmp->next != NULL && start == NULL)
+	{
+		if (tmp->num > 0)
+			start = tmp->next;
+		tmp = tmp->next;
+	}
+	if (start != NULL)
+		PlacingSort(start);
+}
+
 int main()
 {
 	Node* queue = ReadFile("input.txt");
+	WriteFile(queue, "output1.txt");
 	RemoveOverAverage(queue);
-
-	WriteFile(queue, "output.txt");
+	WriteFile(queue, "output2.txt");
+	SortAfterPositive(queue);
+	WriteFile(queue, "output3.txt");
 	FreeMemory(queue);
 }
